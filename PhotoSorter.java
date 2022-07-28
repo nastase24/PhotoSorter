@@ -8,7 +8,8 @@ import java.io.FilenameFilter;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Font;
-
+import java.awt.Desktop;
+import java.awt.Desktop.Action;
 
 public class PhotoSorter
 {
@@ -137,6 +138,12 @@ public class PhotoSorter
         
         PhotoSorter sorter = new PhotoSorter();
         sorter.createImages();
+        try{
+            Desktop.getDesktop().open(sorter.results);
+
+        }catch(IOException e){
+            System.out.println("Error Opening Explorer.");
+        }
         System.out.println("Done.");
 
     }
