@@ -6,10 +6,8 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.FilenameFilter;
 import java.awt.Color;
-import java.util.Arrays;
 import java.awt.Graphics;
 import java.awt.Font;
-//import javax.swing.JFileChooser;
 
 
 public class PhotoSorter
@@ -18,25 +16,23 @@ public class PhotoSorter
     public File[] fileList;
     public BufferedImage[] imageArray;
     public File dir,parent,results;
-    public Path rp,gp,bp;
     public int[][] minMaxRGB;
     int[] redArr;
     int[] greenArr;
     int[] blueArr;
     int[] alphaArr;
     public PhotoSorter(){
-        dir = new File(System.getProperty("user.dir"));
-        parent = new File(dir.getParent());
+        //dir = new File(System.getProperty("user.dir"));
+        parent = new File(BasicFileGui.getInputPath("C:\\Users").toString());
         results = new File(parent,"results");
         results.mkdir();
-        //rp = r.toPath();
-
+        
         fileList = parent.listFiles(new FilenameFilter()
             {
                 //Creates an anonymous class, that overrides the accept method to search for file extensions.
                 @Override
                 public boolean accept(File directory, String fileName) {
-                    if (fileName.endsWith(".png") || fileName.endsWith("jpg")) {
+                    if (fileName.endsWith(".png") || fileName.endsWith(".jpg")) {
                         return true;
                     }
                     return false;
@@ -57,8 +53,17 @@ public class PhotoSorter
 
         }
     }
-
     /*
+    public  boolean clearResults(){
+        if(this.results == null){
+            System.out.println("No Results Folder");
+            return false;
+        }else{
+            results.delete();
+            results.mkdirs();
+        }
+    }
+    
     Computes the average color of parameter BufferedImage, returns the color
      */
     public static Color averageColor(BufferedImage bi){
@@ -102,6 +107,10 @@ public class PhotoSorter
     }
 
     public void createImages(){
+        if(this.imageArray.length == 0){
+            System.out.println("No images found in directory " + parent.getAbsolutePath());
+            return;     
+        }
         for(int i = 0; i < this.imageArray.length; i++){
             Color tempColor = averageColor(this.imageArray[i]);
             int borderWidth = this.imageArray[i].getWidth()/8;
@@ -116,23 +125,19 @@ public class PhotoSorter
             g.drawString(text, borderWidth,this.imageArray[i].getHeight() + borderHeight + borderHeight/2 );
             g.drawImage(imageArray[i],borderWidth,borderHeight, null);
             try{
-                ImageIO.write(result,"PNG", new File("C:\\Users\\narga\\Desktop\\Code\\PhotoColorSorter\\results\\" + i + ".png"));
+                ImageIO.write(result,"PNG", new File(parent.getAbsolutePath() + "\\results\\" + i + ".png"));
             }catch(IOException e){
-                
+                System.out.println("Error Writing Image.");
             }
         }
     }
 
-    public int[][] printMinAndMax(){
-        int[][] minMax = new int[4][this.imageArray.length];
-        return new int[1][1];
-    }
-
     public static void main(String[] args){
-        System.out.print("Hello");
+        System.out.println("Initialized.");
         
         PhotoSorter sorter = new PhotoSorter();
         sorter.createImages();
-        
+        System.out.println("Done.");
+
     }
 }
